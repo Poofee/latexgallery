@@ -1,0 +1,67 @@
+\documentclass{ctexart}
+
+\setCJKmainfont[BoldFont=SimHei,ItalicFont=KaiTi]{SimSun}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+\usepackage{amsmath} % nice math symbols
+\usepackage{bm} % bold math
+\usepackage{color} % change text color
+%%%<
+\usepackage{verbatim}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{5pt}%
+
+\begin{document}
+	
+	\tikzstyle{decision} = [diamond, draw,
+	text badly centered,aspect=3, node distance=2cm, inner sep=0pt]%text width=4.5em,
+	\tikzstyle{block} = [rectangle, draw,
+	text centered, rounded corners, font=\small,minimum width = 6cm]%text width=5em,
+	\tikzstyle{blockend} = [rectangle, draw,
+	text centered, rounded corners, font=\small]%text width=5em,
+	\tikzstyle{line} = [draw, -latex']
+	%\tikzstyle{cloud} = [draw, ellipse,fill=red!20, node distance=3cm]
+	%\tikzstyle{arrow1} = [ ->, >= stealth]
+	%\tikzstyle{arrow2} = [ -, >= stealth]
+		\begin{tikzpicture}[node distance = 1.2cm, auto]
+		\node [blockend] (a1) {开始};
+		\node [block,below of=a1,minimum width = 4cm] (a2) {申请变量空间，并初始化};
+		\node [block,below of=a2,minimum width = 4cm] (a3){读入分网文件};
+		\node [block,below of=a3,minimum width = 4cm] (nrstart){开始第$k$(k=0)次牛顿迭代};
+		\node [block,below of=nrstart] (a4){计算迭代单元系数矩阵$S^e$};
+		\node [block,below of=a4] (a5){计算雅可比矩阵$J^e$};
+		\node [block,below of=a5] (a6){计算右侧矩阵$F^e$};
+		\node [block,below of=a6] (a7){进行有限元装配};
+		\node [block,below of=a7] (a8){求解$J_{k}A_{k+1}=F+(J_{k}-S_{k})A_{k}$};
+		\node [block,below of=a8] (a9){计算单元中$\mu$和$\boldsymbol{B}$值};
+		\node [decision,below of=a9,node distance=1.5cm] (error) {$
+			\left| \frac{A_{k+1} - A_{k}}{A_{k}}    
+			\right| < \varepsilon?
+			$};
+		
+		\node [blockend,below of=error,node distance=1.8cm] (a10){求解结束};
+		
+		%通过放置两个看不见的node来绘制折线
+		\node [right of=a4,node distance=4cm] (a11){};
+		\node [right of=error,node distance=4cm] (a12){};
+		
+		\path [line] (a1) -- (a2);
+		\path [line] (a2) -- (a3);
+		\path [line] (a3) -- (nrstart);
+		\path [line] (nrstart) -- (a4);
+		\path [line] (a4) -- (a5);
+		\path [line] (a5) -- (a6);
+		\path [line] (a6) -- (a7);
+		\path [line] (a7) -- (a8);
+		\path [line] (a8) -- (a9);
+		\path [line] (error) --node {YES} (a10);
+		\path [line] (a9) -- (error);
+		
+		\path [line] (error) --node{NO} (a12.center) --node[above,rotate=90]{$k=k+1$} (a11.center)-- (a4);
+		%\draw [arrow1] (a11.center) -- (a4);
+		%\draw [arrow2] (error) --node{NO} (a12.center);
+		%\draw [arrow2] (a12.center) -- (a11.center);
+		\end{tikzpicture}
+		
+\end{document}
