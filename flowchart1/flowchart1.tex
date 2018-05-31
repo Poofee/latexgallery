@@ -1,0 +1,128 @@
+\documentclass{ctexart}
+%\usepackage{ctex}
+\setCJKmainfont[BoldFont=SimHei,ItalicFont=KaiTi]{SimSun}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+\usepackage{amsmath} % nice math symbols
+\usepackage{bm} % bold math
+\usepackage{color} % change text color
+%%%<
+\usepackage{verbatim}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{5pt}%
+%%%>
+
+\begin{comment}
+:Title: Simple flow chart
+:Tags: Diagrams
+
+With PGF/TikZ you can draw flow charts with relative ease. This flow chart from [1]_
+outlines an algorithm for identifying the parameters of an autonomous underwater vehicle model.
+
+Note that relative node
+placement has been used to avoid placing nodes explicitly. This feature was
+introduced in PGF/TikZ >= 1.09.
+
+.. [1] Bossley, K.; Brown, M. & Harris, C. Neurofuzzy identification of an autonomous underwater vehicle `International Journal of Systems Science`, 1999, 30, 901-913
+
+
+\end{comment}
+
+
+\begin{document}
+\pagestyle{empty}
+
+%定义形状样式
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width = 3cm, minimum height = 0.7cm, text centered, draw = black]
+\tikzstyle{startstop2} = [rectangle, rounded corners, minimum width = 13cm, minimum height = 0.7cm, text centered, draw = black]
+\tikzstyle{io} = [trapezium, trapezium left angle = 30, trapezium right angle = 150, minimum width = 3cm, text centered, draw = black, fill = white]
+\tikzstyle{io2} = [trapezium, trapezium left angle = 30, trapezium right angle = 150, minimum width = 2.5cm, draw = black, fill = white]
+\tikzstyle{io3} = [trapezium, trapezium left angle = 30, trapezium right angle = 150, minimum width = 2cm, draw = black, fill = white]
+\tikzstyle{process} = [rectangle, minimum width = 3cm, minimum height = 1cm, text centered, draw = black]
+\tikzstyle{decision} = [diamond, minimum width = 3cm, minimum height = 1cm, text centered, draw = black]
+\tikzstyle{arrow} = [thick, -, >= stealth]
+\tikzstyle{arrow2} = [thick, ->, >= stealth]
+
+\begin{tikzpicture}[node distance = 1.5cm]
+% 定义流程图具体形状
+\coordinate[label = left:{\small 输入图像}](A) at(-1.5, 0);
+\node(in1) [io] {};
+\node(pro1) [startstop, below of = in1] {\small 线性滤波};
+
+\node(in2 - 2)[io3, below of = pro1, yshift = -0.6cm]{};
+\node(in3 - 2)[io3, left of = in2 - 2, xshift = -2.5cm]{};
+\node(in4 - 2)[io3, right of = in2 - 2, xshift = 2.5cm]{};
+
+\node(in2 - 1)[io2, below of = pro1, yshift = -0.3cm]{};
+\node(in3 - 1)[io2, left of = in2 - 1, xshift = -2.5cm]{};
+\node(in4 - 1)[io2, right of = in2 - 1, xshift = 2.5cm]{};
+
+\node(in2) [io, below of = pro1] {\small 颜色};
+\node(in3)[io, left of = in2, xshift = -2.5cm]{ \small 亮度 };
+\node(in4)[io, right of = in2, xshift = 2.5cm]{ \small 方向 };
+
+\node(in5)[startstop2, below of = in2 - 2]{ \small Center - Surround差异计算及归一化 };
+
+\node(in6 - 2)[io3, below of = in5, yshift = -0.6cm]{};
+\node(in7 - 2)[io3, left of = in6 - 2, xshift = -2.5cm]{};
+\node(in8 - 2)[io3, right of = in6 - 2, xshift = 2.5cm]{};
+
+\node(in6 - 1)[io2, below of = in5, yshift = -0.3cm]{};
+\node(in7 - 1)[io2, left of = in6 - 1, xshift = -2.5cm]{};
+\node(in8 - 1)[io2, right of = in6 - 1, xshift = 2.5cm]{};
+
+\node(in6) [io, below of = in5] {};
+\node(in7)[io, left of = in6, xshift = -2.5cm]{};
+\node(in8)[io, right of = in6, xshift = 2.5cm]{};
+
+\coordinate[label = left:{\small 特征图}](B) at(-1, -6.2);
+\coordinate[label = left:{\small （12张）}](C) at(-1.5, -7.5);
+\coordinate[label = left:{\small （6张）}](D) at(2.7, -7.5);
+\coordinate[label = left:{\small （24张）}](E) at(6.7, -7.5);
+
+\node(in9)[startstop2, below of = in6 - 2]{ \small 跨尺度合并及归一化 };
+
+\node(in10) [io, below of = in9] {};
+\node(in11)[io, left of = in10, xshift = -2.5cm]{};
+\node(in12)[io, right of = in10, xshift = 2.5cm]{};
+
+\coordinate[label = left:{\small 醒目图}](F) at(-1, -9.5);
+\node(in13) [startstop, below of = in10] {\small 线性组合};
+\node(in14) [io, below of = in13] {};
+\coordinate[label = left:{\small 显著图}](G) at(-1, -13);
+
+\node(in15) [startstop, below of = in14] {\small 赢者取全};
+\coordinate[label = left:{\small 显著位置}]() at(1, -16.1);
+\coordinate[label = left:{\small 反馈抑制}]() at(4.5, -14.7);
+
+%连线
+\draw[arrow](pro1) -- (in1);
+\draw[arrow](pro1) -- (in2);
+\draw[arrow](pro1) -- (in3);
+\draw[arrow](pro1) -- (in4);
+\draw[arrow](0, -4.75) -- (in2 - 2);
+\draw[arrow](-4, -4.75) -- (in3 - 2);
+\draw[arrow](4, -4.75) -- (in4 - 2);
+\draw[arrow](0, -5.45) -- (in6);
+\draw[arrow](-4, -5.45) -- (in7);
+\draw[arrow](4, -5.45) -- (in8);
+\draw[arrow](0, -8.35) -- (in6 - 2);
+\draw[arrow](-4, -8.35) -- (in7 - 2);
+\draw[arrow](4, -8.35) -- (in8 - 2);
+\draw[arrow](0, -9.05) -- (in10);
+\draw[arrow](-4, -9.05) -- (in11);
+\draw[arrow](4, -9.05) -- (in12);
+\draw[arrow](in13) -- (in10);
+\draw[arrow](in13) -- (in11);
+\draw[arrow](in13) -- (in12);
+\draw[arrow](in13) -- (in14);
+\draw[arrow](in14) -- (in15);
+\draw[arrow](in15) -- (0, -15.8);
+\draw[arrow](0, -15.4) -- (2.5, -15.4);
+\draw[arrow](2.5, -14) -- (2.5, -15.4);
+\draw[arrow2](2.5, -14) -- (0, -14);
+\end{tikzpicture}
+
+
+\end{document} 
